@@ -1,0 +1,17 @@
+.fake-review-highlight {
+  background-color: #ffebee !important;
+  border: 2px solid red !important;
+  border-radius: 6px !important;
+  box-sizing: border-box !important;
+}
+
+.ml-fake-review-badge {
+  display: block !important;
+  margin: 0 0 10px !important;
+  padding: 7px 10px !important;
+  background: #ffcdd2 !important;
+  border-left: 4px solid #b71c1c !important;
+  border-radius: 3px !important;
+  color: #7f0000 !important;
+  font: 700 13px/1.4 Arial, sans-serif !important;
+}

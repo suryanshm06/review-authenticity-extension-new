@@ -1,0 +1,17 @@
+{
+  "name": "review-authenticity-extension-bridge",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Local Express bridge and Python model service for the Review Authenticity Highlighter Chrome extension.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
