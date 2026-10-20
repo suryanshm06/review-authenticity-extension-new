@@ -1,0 +1,238 @@
+.fake-review-highlight {
+  background-color: #ffebee !important;
+  border: 2px solid red !important;
+  border-radius: 6px !important;
+  box-sizing: border-box !important;
+}
+
+.ml-fake-review-badge {
+  display: block !important;
+  margin: 0 0 10px !important;
+  padding: 7px 10px !important;
+  background: #ffcdd2 !important;
+  border-left: 4px solid #b71c1c !important;
+  border-radius: 3px !important;
+  color: #7f0000 !important;
+  font: 700 13px/1.4 Arial, sans-serif !important;
+}
+
+#ml-unflagged-rating-widget {
+  all: initial !important;
+  box-sizing: border-box !important;
+  position: fixed !important;
+  right: 18px !important;
+  bottom: 18px !important;
+  z-index: 2147483647 !important;
+  direction: ltr !important;
+  color: #172033 !important;
+  font: 14px/1.45 Arial, sans-serif !important;
+}
+
+#ml-unflagged-rating-widget *,
+#ml-unflagged-rating-widget *::before,
+#ml-unflagged-rating-widget *::after {
+  box-sizing: border-box !important;
+  font-family: Arial, sans-serif !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-toggle,
+#ml-unflagged-rating-widget .ml-rating-refresh,
+#ml-unflagged-rating-widget .ml-rating-close {
+  appearance: none !important;
+  cursor: pointer !important;
+  font-weight: 700 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-toggle {
+  display: block !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 11px 16px !important;
+  background: #174ea6 !important;
+  color: #fff !important;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.24) !important;
+  font-size: 14px !important;
+  line-height: 1.3 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-toggle:hover,
+#ml-unflagged-rating-widget .ml-rating-refresh:hover {
+  filter: brightness(0.94) !important;
+}
+
+#ml-unflagged-rating-panel {
+  position: absolute !important;
+  right: 0 !important;
+  bottom: calc(100% + 10px) !important;
+  width: min(370px, calc(100vw - 36px)) !important;
+  max-height: min(76vh, 560px) !important;
+  overflow-y: auto !important;
+  padding: 16px !important;
+  border: 1px solid #d7deea !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  color: #172033 !important;
+  box-shadow: 0 8px 30px rgba(20, 35, 60, 0.22) !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+}
+
+#ml-unflagged-rating-panel[hidden] {
+  display: none !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-header {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin: 0 0 10px !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-title {
+  margin: 0 !important;
+  color: #172033 !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-close {
+  flex: 0 0 auto !important;
+  border: 0 !important;
+  padding: 0 3px !important;
+  background: transparent !important;
+  color: #526079 !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-value {
+  margin: 4px 0 6px !important;
+  color: #174ea6 !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-comparison {
+  margin: 0 0 12px !important;
+  color: #344054 !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-stats {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 7px !important;
+  margin: 0 0 14px !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-stat {
+  display: flex !important;
+  min-height: 55px !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  padding: 6px 4px !important;
+  border: 1px solid #e3e8f0 !important;
+  border-radius: 8px !important;
+  background: #f8faff !important;
+  text-align: center !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-stat-number {
+  color: #172033 !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-stat-label {
+  color: #667085 !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-distribution-title {
+  margin: 0 0 6px !important;
+  color: #172033 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-distribution {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  margin: 0 0 12px !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-dist-row {
+  display: grid !important;
+  grid-template-columns: 48px minmax(40px, 1fr) 64px !important;
+  align-items: center !important;
+  gap: 7px !important;
+  min-height: 14px !important;
+  color: #475467 !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-dist-label {
+  text-align: right !important;
+  white-space: nowrap !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-dist-track {
+  display: block !important;
+  height: 8px !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background: #e9edf4 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-dist-bar {
+  display: block !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  background: #4f8fe8 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-dist-count {
+  color: #667085 !important;
+  white-space: nowrap !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-empty-distribution {
+  margin: 0 0 8px !important;
+  color: #667085 !important;
+  font-size: 11px !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-details,
+#ml-unflagged-rating-widget .ml-rating-note {
+  margin: 0 0 9px !important;
+  color: #344054 !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-note {
+  color: #667085 !important;
+  font-size: 10px !important;
+}
+
+#ml-unflagged-rating-widget .ml-rating-refresh {
+  display: inline-block !important;
+  border: 1px solid #174ea6 !important;
+  border-radius: 7px !important;
+  padding: 7px 11px !important;
+  background: #fff !important;
+  color: #174ea6 !important;
+  font-size: 12px !important;
+  line-height: 1.3 !important;
+}

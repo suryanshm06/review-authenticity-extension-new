@@ -1,84 +1,120 @@
-# Review Authenticity Highlighter — GitHub XGBoost model update
+# Review Authenticity Highlighter
 
-This is an update for the existing Manifest V3 Chrome extension. It switches the Python API from the earlier experimental Logistic Regression baseline to the pretrained TF-IDF + XGBoost files from the GitHub repository you provided. **It does not retrain the model.**
+A local Chrome/Brave extension for Amazon.in, Amazon.com, and Flipkart. It sends review text to a local Express bridge and a local Python service, highlights reviews the supplied TF-IDF + XGBoost model flags, and can calculate an average star rating from analyzed reviews the model did not flag.
 
-The browser extension still watches Amazon.in, Amazon.com, and Flipkart review sections, submits small batches of review strings to the local Express bridge, and highlights flagged reviews in red.
+## Important model limitations
 
-## What the model means (important)
+The supplied GitHub model uses `OR = 0` (original/presumed-genuine) and `CG = 1` (computer-generated/fake). Its class-1 probability is treated as a suspicion score; reviews at or above `0.50` are flagged. A model-unflagged review is **not verified** as human-written or genuine, and a flagged review is not proof of deception or AI authorship. Treat both the badge and adjusted rating as decision aids, not facts.
 
-The repository's training code uses `OR = 0` for original/presumed-genuine reviews and `CG = 1` for computer-generated/fake reviews. The service treats the class-1 probability as the score and flags a review at `0.50` or above, matching the repository's inference wrapper.
+The model expects review text prefixed with a rating when one is available (for example, `5 stars. Review text`). The extension tries to extract star ratings from each supported site's review markup. Missing or unreadable ratings are omitted from the average.
 
-A flag is only a match to patterns learned from that model's dataset. It does **not** prove that a review is fake, dishonest, or AI-written, and it may make mistakes. The requested badge wording is `⚠️ AI flagged as likely fake.`; interpret it as a warning to check the review, not as proof.
+## Project files
 
-The GitHub model was trained with text in the form `5 stars. review text`. The extension now tries to extract the rating on Amazon and Flipkart and prefixes it in that format. If a rating cannot be found, it sends the review text without a prefix. The API still receives a plain JSON array of strings.
+- `manifest.json` — Manifest V3 extension settings and local API permission.
+- `content.js` — review extraction, dynamic page observation, model results, badge, and adjusted-rating UI.
+- `styles.css` — red warning highlight and bottom-right rating panel.
+- `background.js` — extension service worker that requests the local Node bridge.
+- `server.js` — local Express/CORS bridge on port 3000.
+- `model/model_service.py` — local Python API on port 8000; loads the included saved artifacts.
+- `model/fake_review_detector/tfidf.pkl` and `xgb_model.pkl` — pretrained model files from the repository supplied by the user.
+- `model/requirements.txt` — Python dependencies.
 
-## Files in this update
+No training run is required. Do not run a separate baseline trainer; the bundled GitHub artifacts are the model used for inference.
 
-- `content.js` — rating extraction, dynamic review observation, batching, and the exact requested badge wording.
-- `model/model_service.py` — loads the bundled TF-IDF and XGBoost artifacts and returns class-1 scores.
-- `model/requirements.txt` — includes the XGBoost dependency.
-- `model/fake_review_detector/tfidf.pkl` and `xgb_model.pkl` — saved artifacts from your linked repository.
-- `server.js` — no API behavior change; its explanatory comment now points at the active model service.
+## Requirements
 
-The existing `manifest.json`, `background.js`, `styles.css`, and `package.json` are unchanged. `server.js` still has the same API behavior; its comment now points to the selected model service. The old `model/train_model.py`, `model/my_labeled_reviews.csv`, and `model/model_artifacts/review_classifier.joblib` (if present) are not used by this model service. **Do not run the old trainer for this setup**; it creates a separate Logistic Regression model and does not replace these GitHub artifacts.
+- Windows 10 or newer.
+- Python 3.10 or newer. If the `py` launcher is unavailable, use `python` commands as shown below.
+- Node.js 18 or newer.
+- Chrome or a Chromium-based browser such as Brave.
 
-## Apply this update to your existing Windows project
+## First-time setup on Windows
 
-The ZIP is an **update patch**, not a complete project. Extract it first, then copy its files into your existing extension folder while preserving the folder structure. For example, copy the patch's `content.js` into the project root and its `model` folder into the project's `model` folder. Allow Windows to replace the matching `content.js`, `model_service.py`, `requirements.txt`, and model artifact files. Do not delete your other project files.
-
-### 1. Stop the Python service
-
-In the Command Prompt window running the Python service, press **Ctrl+C**. If the Node bridge is already working, it can stay open; otherwise start it as described below.
-
-### 2. Install the XGBoost dependency
-
-Open a new Command Prompt in the existing project folder (the folder containing `package.json`). Activate the project's virtual environment, then install the updated requirements:
+Extract the complete project folder somewhere convenient. Open Command Prompt and change directory to the folder containing `manifest.json` and `package.json`. For example:
 
 ```cmd
+cd /d "C:\Users\admin\Downloads\project norman\review-authenticity-extension new"
+```
+
+### 1. Create a Python environment and install dependencies
+
+Run these once in that project folder:
+
+```cmd
+python --version
+python -m venv .venv
 .venv\Scripts\activate
+python -m pip install --upgrade pip
 python -m pip install --upgrade -r model\requirements.txt
 ```
 
-This upgrades older packages in the virtual environment; the saved TF-IDF vectorizer was serialized with scikit-learn 1.9.0, so keep the environment updated. If Command Prompt says the activation file does not exist, create the environment once with `py -m venv .venv`, then activate it and run the install command again.
+The saved TF-IDF vectorizer was serialized with scikit-learn 1.9.0; the requirements pin that version for compatibility. If `python` is not recognized, install Python from python.org, select **Add python.exe to PATH**, then reopen Command Prompt.
+
+### 2. Install Node dependencies
+
+In the same project folder, run:
+
+```cmd
+npm install
+```
+
+This is a one-time setup for this folder.
 
 ### 3. Start the Python model service
 
-In that Command Prompt, run:
+In the first Command Prompt, with `(.venv)` active, run:
 
 ```cmd
 python model\model_service.py
 ```
 
-Leave the window open. In Chrome, visit `http://127.0.0.1:8000/health`. Confirm that the page says `"modelLoaded": true` and identifies `user-repo TF-IDF + XGBoost`.
+Leave the window open. Check `http://127.0.0.1:8000/health`; the JSON should report `"modelLoaded": true`. A `404` at the root `http://127.0.0.1:8000/` is expected; use `/health`.
 
-### 4. Start or keep the Node bridge running
+### 4. Start the Node bridge
 
-If the bridge is not already running, open a second Command Prompt in the project folder and run:
+Open a second Command Prompt in the project folder and run:
 
 ```cmd
-npm install
 npm start
 ```
 
-Leave that window open. Check `http://localhost:3000/health`; it should say `"ok": true`.
+Leave this window open too. Check `http://localhost:3000/health`; it should report `"ok": true`.
 
-### 5. Reload the Chrome extension
+### 5. Load the extension
 
-1. Open `chrome://extensions`.
-2. Find **Review Authenticity Highlighter** and click **Reload**. If it is not listed, turn on **Developer mode**, click **Load unpacked**, and choose your existing project folder (the one containing `manifest.json`), not the extracted patch folder.
-3. Refresh the Amazon or Flipkart product page and scroll to its reviews.
+1. Open `chrome://extensions` in Chrome or `brave://extensions` in Brave.
+2. Enable **Developer mode**.
+3. Click **Load unpacked** and select the project folder containing `manifest.json` (not the ZIP and not the `model` subfolder).
+4. Make sure the extension is enabled.
 
-The extension's MV3 service worker makes the request to the local bridge. Keep the Python service and Node bridge running while using the extension.
+## Use the extension
 
-## Quick checks and troubleshooting
+1. Keep both service windows running.
+2. Open a product page on Amazon.in, Amazon.com, or Flipkart.
+3. Refresh the page and scroll so reviews load. The extension analyzes review batches as they appear.
+4. Reviews the model flags receive a red border and the badge `⚠️ AI flagged as likely fake.`
+5. To request the adjusted rating, click **Show adjusted rating** at the bottom-right of the page. The panel shows the arithmetic mean of readable star ratings on analyzed reviews that the model did not flag.
+6. Scroll to load more reviews, allow the analysis to finish, then click **Recalculate** to include the newly loaded reviews.
 
-- Python model health: `http://127.0.0.1:8000/health` → `modelLoaded` must be `true`.
-- Node bridge health: `http://localhost:3000/health` → `ok` must be `true`.
-- If health reports the model is not loaded, check that both files exist under `model\fake_review_detector\` and that `xgboost` installed successfully.
-- If the extension makes no request, reload it in `chrome://extensions`, refresh the product tab, and check the tab's Developer Tools Console for `[Review Highlighter]` messages.
-- If no reviews are highlighted, the model may have scored them below `0.50`, or the site may have changed its review markup. Review selectors are grouped near the top of `content.js` and are best-effort.
-- Keep the services bound to this computer only. Do not expose the local bridge or Python service to the internet or your LAN.
+The adjusted rating only covers reviews that are currently loaded on the page, have a readable star rating, and have a completed model verdict. Model-unflagged does not mean confirmed genuine.
 
-## Security note
+## Quick troubleshooting
 
-The `.pkl` artifacts use Python pickle serialization. Loading pickle files can execute code, so use only model artifacts from a repository you trust. These bundled artifacts were taken from the repository you supplied.
+- Python health: `http://127.0.0.1:8000/health` → `modelLoaded` should be `true`.
+- Node health: `http://localhost:3000/health` → `ok` should be `true`.
+- After reloading the extension in `chrome://extensions` or `brave://extensions`, refresh the product tab.
+- On the product page, DevTools Console checks:
+
+  ```js
+  document.querySelectorAll('[data-ml-status="complete"]').length
+  document.querySelectorAll('[data-ml-status="error"]').length
+  document.querySelectorAll('[data-ml-fake="true"]').length
+  ```
+
+  Completed reviews with no errors means the pipeline is working, even if no review is flagged.
+- Amazon advertising/CSP console messages are from Amazon, not necessarily the extension. Look for messages beginning `[Review Highlighter]` for extension errors.
+- Keep the services bound to the local computer. Do not expose them to the internet or LAN.
+
+## Stop the services
+
+When finished, press **Ctrl+C** in each service Command Prompt. Next time, activate `.venv` and start the Python service again, then run `npm start` in a second window. No retraining is needed.

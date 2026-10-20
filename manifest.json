@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Review Authenticity Highlighter",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Scores Amazon and Flipkart reviews with a local machine-learning model and highlights suspicious ones.",
   "host_permissions": [
     "http://localhost:3000/*",
